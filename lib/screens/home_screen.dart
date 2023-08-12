@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/controller/fetch_news.dart';
 import 'package:news_app/model/newsArt.dart';
@@ -38,8 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         actions: [
           ElevatedButton(onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => LoginScreen(),));
+            FirebaseAuth.instance.signOut().then((value) {
+              print("Signed Out");
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen(),));
+            });
+
           },
               child: Text("Log Out",style: TextStyle(fontWeight: FontWeight.bold,
               color: Colors.black),) )

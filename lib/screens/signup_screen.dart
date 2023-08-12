@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/reusable/reusable_widget.dart';
 import 'package:news_app/screens/home_screen.dart';
@@ -10,6 +12,9 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,17 +26,27 @@ class _SignUpState extends State<SignUp> {
       ),
       
       body: Padding(
-        padding: const EdgeInsets.only(top: 175,right: 8,left: 8),
+        padding: const EdgeInsets.only(top: 80,right: 8,left: 8),
         child: Column(
           children: [
-            reusableTextField("Enter UserName", Icons.person_outline, false, TextEditingController()),
+            reusableTextField("Enter UserName", Icons.person_outline, false, _userNameController),
             SizedBox(height: 20,),
-            reusableTextField("Enter Email Id", Icons.person_outline, false, TextEditingController()),
+            reusableTextField("Enter Email Id", Icons.person_outline, false, _emailController),
             SizedBox(height: 20,),
-            reusableTextField("Enter Password", Icons.lock_outlined, true, TextEditingController()),
+            reusableTextField("Enter Password", Icons.lock_outlined, true, _passwordController),
             SizedBox(height: 20,),
             firebaseUIButton(context, "Sign Up", () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(),));
+              FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: _emailController.text, password: _passwordController.text).then((value)  {
+                    print("Created New Account");
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen(),));
+              }).onError((error, stackTrace) {
+                print("Error ${error.toString()}");
+              });
+
+              // Navigator.pushReplacement(context,
+              //     MaterialPageRoute(builder: (context) => HomeScreen(),));
             }),
           ],
         ),
